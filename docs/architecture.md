@@ -92,10 +92,16 @@
 | value | DECIMAL(18,4) | KPI value |
 | recorded_at | TIMESTAMP | Timestamp when the KPI was recorded |
 
-## 6. ER Diagram
+## 6. Collaboration Notes
+
+* **Qasim** → Focused on **project setup** (GitHub repo + folder structure), **database schema design**, and **DB connection testing** on cPanel.
+* **Milan** → Handled **cPanel project scaffolding** (PHP 8.x setup, folder deployment) and **documentation updates** (Setup Guide, Architecture refinements).
+* Both collaborated on finalizing the **Architecture** page to ensure the tech stack, data flow, and system components were well-documented.
+
+## 7. ER Diagram
 
 ![ER Diagram.png](https://maazkhalid05.atlassian.net/wiki/download/thumbnails/262148/ER%20Diagram.png?version=1&modificationDate=1758968056920&cacheVersion=1&api=v2&width=760&height=582)
 
-## 7. Architecture Diagram.
+## 8. Architecture Diagram.
 
 ![architecture_diagram.png](https://maazkhalid05.atlassian.net/wiki/download/thumbnails/262148/architecture_diagram.png?version=1&modificationDate=1758963241485&cacheVersion=1&api=v2&width=3840&height=961)
