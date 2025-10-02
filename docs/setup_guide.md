@@ -82,6 +82,9 @@ We follow the Conventional Commits standard:
 ### **4. Commit History Example:**
 
 ```java
-docs: sync architecture content from Confluence
 chore: Initial Project Setup
+docs: sync architecture content from Confluence
+docs: sync setup guide content from Confluence
+feat(db): add cPanel DB connection using env.php
+docs: updated setup guide confluence page 
 ```
