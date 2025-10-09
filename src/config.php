@@ -46,7 +46,7 @@ $db_port = (int)(getenv('DB_PORT') ?: '3306');
 // Establish MySQLi connection
 $conn = @new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
 if ($conn->connect_errno) {
-    // Do not expose secrets, just a concise message
+
     http_response_code(500);
     die('Database connection failed');
 }
