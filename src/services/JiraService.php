@@ -1,7 +1,5 @@
 <?php
-
 require_once __DIR__ . '/../../vendor/autoload.php';
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
@@ -61,6 +59,43 @@ class JiraService {
                 'json' => $updateData
             ]);
             return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+    
+    public function searchIssuesByDueDateRange($startDate, $endDate, $maxResults = 100) {
+        try {
+            $projectKey = getenv('JIRA_PROJECT_KEY');
+            $jql = sprintf(
+                "project = %s AND duedate >= %s AND duedate <= %s AND duedate is not EMPTY ORDER BY duedate ASC",
+                $projectKey,
+                $startDate,
+                $endDate
+            );
+
+            $response = $this->client->get('/rest/api/3/search', [
+                'query' => [
+                    'jql' => $jql,
+                    'maxResults' => $maxResults,
+                    'fields' => 'summary,duedate'
+                ]
+            ]);
+
+            $data = json_decode($response->getBody(), true);
+            $issues = $data['issues'] ?? [];
+
+            $mapped = [];
+            foreach ($issues as $issue) {
+                $fields = $issue['fields'] ?? [];
+                $mapped[] = [
+                    'key' => $issue['key'] ?? '',
+                    'summary' => $fields['summary'] ?? '',
+                    'duedate' => $fields['duedate'] ?? null,
+                ];
+            }
+
+            return $mapped;
         } catch (Exception $e) {
             return false;
         }
