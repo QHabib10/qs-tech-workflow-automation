@@ -66,6 +66,33 @@ class EmailService {
     private function getAutoReplyTextTemplate($name, $keywords) {
         return "Hi {$name}, thanks—your request is received. We'll reply within 1 business day.";
     }
+
+    // Send low stock notification to PM
+    public function sendLowStockNotification($itemName, $qty, $threshold) {
+        try {
+            $pmEmail = getenv('PROCUREMENT_PM_EMAIL') ?: getenv('REPLY_TO') ?: getenv('FROM_EMAIL');
+            if (!$pmEmail) {
+                return false;
+            }
+
+            $this->mailer->clearAddresses();
+            $this->mailer->addAddress($pmEmail);
+
+            $this->mailer->isHTML(true);
+            $this->mailer->Subject = "Low stock Alert!";
+
+            $html = "<p>Low stock detected for <strong>{$itemName}</strong>.</p>"
+                  . "<p>Current qty: <strong>{$qty}</strong> / Threshold: <strong>{$threshold}</strong></p>"
+                  . "<p>Please review and reorder as needed.</p>";
+            $this->mailer->Body = $html;
+            $this->mailer->AltBody = "Low stock: {$itemName} ({$qty}/{$threshold}). Please review and reorder.";
+
+            $result = $this->mailer->send();
+            return $result;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
     
     private function logEmail($action, $email, $status, $leadId = null) {
        

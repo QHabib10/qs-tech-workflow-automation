@@ -36,3 +36,13 @@ CREATE TABLE kpis (
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE alerts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_name VARCHAR(255) NOT NULL,
+    item_qty INT NOT NULL,
+    threshold INT NOT NULL,
+    status ENUM('open','resolved') DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP NULL
+);
+
