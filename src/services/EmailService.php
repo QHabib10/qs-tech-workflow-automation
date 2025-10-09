@@ -93,6 +93,29 @@ class EmailService {
             return false;
         }
     }
+
+    // Send completion email when Jira issue is done
+    public function sendCompletionEmail($toName, $toEmail, $issueKey) {
+        try {
+            $this->mailer->clearAddresses();
+            $this->mailer->addAddress($toEmail, $toName);
+
+            $this->mailer->isHTML(true);
+            $this->mailer->Subject = 'Your project is complete - thank you!';
+
+            $html = "<div style='font-family:Arial,sans-serif;max-width:600px;margin:auto;'>"
+                  . "<p>Hi <strong>{$toName}</strong>, your job <strong>{$issueKey}</strong> is complete.</p>"
+                  . "<p>We’d love your feedback. Also, we offer maintenance plans—reply if interested.</p>"
+                  . "<p> From QS Tech</p>"
+                  . "</div>";
+            $this->mailer->Body = $html;
+            $this->mailer->AltBody = "Hi {$toName}, your job {$issueKey} is complete. We'd love your feedback. — QS Tech";
+
+            return $this->mailer->send();
+        } catch (Exception $e) {
+            return false;
+        }
+    }
     
     private function logEmail($action, $email, $status, $leadId = null) {
        
