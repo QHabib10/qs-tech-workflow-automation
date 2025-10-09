@@ -1,6 +1,8 @@
 <?php require __DIR__ . '/../config.php'; 
+require_once __DIR__ . '/../services/EmailService.php';
+require_once __DIR__ . '/../services/KeywordService.php';
 
-// Handle form submission
+// Handle Lead Capture form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
     $name    = trim($_POST['name']);
@@ -18,8 +20,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
     if (isset($stmt)) {
         if ($stmt->execute()) {
-            // PRG: redirect to avoid resubmission on refresh
-            header('Location: /src/pages/lead_capture.php?success=1', true, 303);
+            // Get the inserted lead ID
+            $leadId = $conn->insert_id;
+            
+            // Detect keywords and send auto-reply email
+            $keywords = KeywordService::detect($message);
+            $emailService = new EmailService($conn);
+            $emailSent = $emailService->sendAutoReply($name, $email, $keywords, $leadId);
+            
+            // Redirect with both lead and email status
+            $redirectUrl = '/src/pages/lead_capture.php?success=1';
+            if ($emailSent) {
+                $redirectUrl .= '&email=1';
+            } else {
+                $redirectUrl .= '&email=0';
+            }
+            
+            header('Location: ' . $redirectUrl, true, 303);
             exit;
         } else {
             $error = "Failed to add lead.";
@@ -37,14 +54,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
     <title>Lead Capture - QS Tech</title>
     <link rel="stylesheet" href="/assets/sidebar.css" />
     <link rel="stylesheet" href="/assets/lead_form.css" />
+    <script src="/assets/alert.js"></script>
 </head>
 <body>
     <div class="layout">
         <?php include __DIR__ . '/../components/sidebar.php'; ?>
         <main class="content">
-            <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success">Lead added successfully.</div>
-            <?php endif; ?>
+            <?php 
+            // Lead capture success alert
+            if (isset($_GET['success'])): 
+                $type = 'success';
+                $message = 'Lead added successfully.';
+                include __DIR__ . '/../components/alert.php';
+            endif; 
+            
+            // Email status alerts
+            if (isset($_GET['email'])): 
+                if ($_GET['email'] == '1'): 
+                    $type = 'success';
+                    $message = 'Auto-reply email sent successfully.';
+                    $duration = 3000; // Slightly longer for email success
+                    include __DIR__ . '/../components/alert.php';
+                elseif ($_GET['email'] == '0'): 
+                    $type = 'warning';
+                    $message = 'Lead saved, but auto-reply email failed to send.';
+                    $duration = 4000; // Longer for warnings
+                    include __DIR__ . '/../components/alert.php';
+                endif;
+            endif; 
+            ?>
             <?php include __DIR__ . '/../components/lead_form.php'; ?>
         </main>
     </div>
@@ -52,22 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
       (function(){
         var form = document.querySelector('.form');
         var btn = document.querySelector('.btn');
-        if(form && btn){
+        if(form && btn)
+        {
           form.addEventListener('submit', function(){
             btn.classList.add('is-loading');
             btn.setAttribute('disabled','disabled');
           });
-        }
-        var success = document.querySelector('.alert.alert-success');
-        if (success) {
-          setTimeout(function(){ success.style.display = 'none'; }, 2500);
-          try {
-            var url = new URL(window.location.href);
-            if (url.searchParams.has('success')) {
-              url.searchParams.delete('success');
-              window.history.replaceState({}, '', url.toString());
-            }
-          } catch(e) {}
         }
       })();
     </script>

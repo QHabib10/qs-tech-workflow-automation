@@ -1,0 +1,17 @@
+{
+    "name": "maazk/qs-tech-workflow-automation",
+    "autoload": {
+        "psr-4": {
+            "Maazk\\QsTechWorkflowAutomation\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Qasim",
+            "email": "q.habib.10@student.scu.edu.au"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.11"
+    }
+}
