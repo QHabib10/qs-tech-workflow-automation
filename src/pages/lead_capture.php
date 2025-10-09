@@ -88,14 +88,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
         <?php include __DIR__ . '/../components/sidebar.php'; ?>
         <main class="content">
             <?php 
-            // Lead capture success alert
+            
             if (isset($_GET['success'])): 
                 $type = 'success';
                 $message = 'Lead added successfully.';
                 include __DIR__ . '/../components/alert.php';
             endif; 
             
-            // Email status alerts
             if (isset($_GET['email'])): 
                 if ($_GET['email'] == '1'): 
                     $type = 'success';
@@ -110,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 endif;
             endif;
             
-            // Jira status alerts
             if (isset($_GET['jira'])): 
                 if ($_GET['jira'] == '1'): 
                     $type = 'success';

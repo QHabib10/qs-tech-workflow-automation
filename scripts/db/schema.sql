@@ -1,4 +1,3 @@
-USE qs_tech;
 
 CREATE TABLE leads (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -27,13 +26,6 @@ CREATE TABLE audit_log (
     entity_id INT,                  
     details TEXT,                   
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE kpis (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    value DECIMAL(18,4) NOT NULL,
-    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE alerts (

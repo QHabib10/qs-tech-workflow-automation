@@ -83,20 +83,23 @@
 | details | TEXT | Additional details about the action |
 | created_at | TIMESTAMP | Timestamp when the action was logged |
 
-### 4. `kpis`
+### 4. `alerts`
 
 | Field | Data Type | Description |
 | --- | --- | --- |
 | id  | INT AUTO_INCREMENT | Primary key |
-| name | VARCHAR(100) | Name of the KPI |
-| value | DECIMAL(18,4) | KPI value |
-| recorded_at | TIMESTAMP | Timestamp when the KPI was recorded |
+| item_name | VARCHAR(255) | Denormalized item name (for historical clarity) |
+| item_qty | INT | Quantity at the time of alert |
+| threshold | INT | Threshold configured for the item |
+| status | ENUM('open','resolved') | Current status of alert |
+| created_at | TIMESTAMP | Creation time |
+| resolved_at | TIMESTAMP NULL | When the alert was resolved |
 
 ## 6. Collaboration Notes
 
-* **Qasim** → Focused on **project setup** (GitHub repo + folder structure), **database schema design**, and **DB connection testing** on cPanel.
-* **Milan** → Handled **cPanel project scaffolding** (PHP 8.x setup, folder deployment) and **documentation updates** (Setup Guide, Architecture refinements).
-* Both collaborated on finalizing the **Architecture** page to ensure the tech stack, data flow, and system components were well-documented.
+* **Qasim** → Implemented **Lead Capture** with auto‑email configuration (auto‑reply), built **Inventory Alerts** and **cron jobs** (low‑stock detection and completion follow‑up email), and contributed to schema/infra setup.
+* **Milan** → Implemented **Jira Integration** in the lead capture flow, created the **Calendar View** and **Dashboard** pages, and led **UI enhancements** across pages.
+* Both collaborated on finalizing the **Architecture** page and documentation to align tech stack, data flow, and system components.
 
 ## 7. ER Diagram
 

@@ -1,11 +1,6 @@
-/**
- * Universal Alert Handler
- * Handles auto-hide functionality for all alert components
- */
 (function() {
     'use strict';
     
-    // Initialize alerts when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
         initializeAlerts();
         cleanupUrlParameters();
@@ -43,7 +38,7 @@
                 window.history.replaceState({}, '', url.toString());
             }
         } catch(e) {
-            // Silently fail if URL manipulation isn't supported
+            
         }
     }
 })();

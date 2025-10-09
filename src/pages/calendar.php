@@ -36,7 +36,7 @@ $issues = $jiraService->searchIssuesByDueDateRange($startDate, $endDate) ?: [];
     <main class="content">
       <div class="calendar-wrap">
         <div class="calendar-header">
-          <h2 class="page-title" style="margin:0;">
+          <h2 class="page-title">
             Jira Issues — <?= $mode === 'week' ? 'Due This Week' : 'Due Within Next 7 Days' ?>
           </h2>
         </div>

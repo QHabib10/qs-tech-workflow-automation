@@ -3,6 +3,12 @@
     margin: 1rem auto;
 }
 
+.page-title {
+    margin: 0 0 16px 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
 .calendar-header {
     display: flex;
     justify-content: space-between;
@@ -45,6 +51,15 @@
 .calendar-filters {
     display: flex;
     gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .calendar-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .calendar-filters { flex-wrap: wrap; }
 }
 
 .card-row {

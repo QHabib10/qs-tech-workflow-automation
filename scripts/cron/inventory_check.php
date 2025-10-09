@@ -20,7 +20,6 @@ foreach ($lowItems as $item) {
     $qty = (int)$item['qty'];
     $threshold = (int)$item['threshold'];
 
-    // Insert alert if not already open for this item and qty
     $check = $conn->prepare("SELECT id FROM alerts WHERE item_name = ? AND status = 'open' LIMIT 1");
     $check->bind_param('s', $itemName);
     $check->execute();
@@ -34,11 +33,8 @@ foreach ($lowItems as $item) {
         $ins->execute();
         $ins->close();
     }
-
-    // Send notification
     $email->sendLowStockNotification($itemName, $qty, $threshold);
 
-    // Audit log with entity_id (inventory id)
     $action = 'low_stock_detected';
     $details = json_encode(['item' => $itemName, 'qty' => $qty, 'threshold' => $threshold]);
     $stmt = $conn->prepare("INSERT INTO audit_log (action, entity, entity_id, details) VALUES (?, 'inventory', ?, ?)");
@@ -54,10 +50,12 @@ $resolveSql = "SELECT a.id AS alert_id, i.id AS inventory_id, a.item_name, i.qty
                WHERE a.status = 'open' AND i.qty >= i.threshold";
 if ($res = $conn->query($resolveSql)) {
     while ($row = $res->fetch_assoc()) {
-        
-        // Mark alert resolved
-        $upd = $conn->prepare("UPDATE alerts SET status='resolved', resolved_at = NOW() WHERE id = ?");
-        $upd->bind_param('i', $row['alert_id']);
+       
+        $upd = $conn->prepare("UPDATE alerts SET status='resolved', item_qty = ?, threshold = ?, resolved_at = NOW() WHERE id = ?");
+        $qtyNow = (int)$row['qty'];
+        $thNow = (int)$row['threshold'];
+        $alertId = (int)$row['alert_id'];
+        $upd->bind_param('iii', $qtyNow, $thNow, $alertId);
         $upd->execute();
         $upd->close();
 

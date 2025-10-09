@@ -7,7 +7,6 @@ require_once __DIR__ . '/../../src/services/EmailService.php';
 $jira = new JiraService($conn);
 $email = new EmailService($conn);
 
-
 $projectKey = getenv('JIRA_PROJECT_KEY');
 
 $jql = sprintf("project = %s AND status = Done AND updated >= -2h ORDER BY updated DESC", $projectKey);

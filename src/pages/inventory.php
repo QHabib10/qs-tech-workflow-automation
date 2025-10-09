@@ -49,7 +49,7 @@ if ($ares = $conn->query($asql)) {
     <?php include __DIR__ . '/../components/sidebar.php'; ?>
     <main class="content">
       <div class="wrap">
-        <h3 class="page-title" style="margin:0 0 12px 0;">Inventory</h3>
+        <h3 class="page-title">Inventory</h3>
         <?php 
           $base = '/src/pages/inventory.php';
           $linkAll = $base . '?status=all';
@@ -95,7 +95,7 @@ if ($ares = $conn->query($asql)) {
         </table>
       </div>
       <div class="wrap" style="margin-top: 24px;">
-        <h3 class="page-title" style="margin:0 0 12px 0;">Alerts</h3>
+        <h3 class="page-title">Alerts</h3>
         <?php 
           $abase = '/src/pages/inventory.php';
           $qs = function($s) use ($status){ return '?status=' . urlencode($status) . '&alerts_status=' . urlencode($s); };

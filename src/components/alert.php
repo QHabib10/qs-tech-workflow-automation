@@ -1,14 +1,9 @@
 <?php
-/**
- * Alert Component
- * Usage: include with $type, $message, $autoHide (optional)
- */
 
-// Default values
 $type = $type ?? 'info';
 $message = $message ?? '';
 $autoHide = $autoHide ?? true;
-$duration = $duration ?? 2500; // milliseconds
+$duration = $duration ?? 2500;
 
 // Alert type classes
 $alertClasses = [
