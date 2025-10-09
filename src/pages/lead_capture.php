@@ -1,8 +1,10 @@
-<?php require __DIR__ . '/../config.php'; 
+<?php 
+require_once __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../config.php'; 
 require_once __DIR__ . '/../services/EmailService.php';
 require_once __DIR__ . '/../services/KeywordService.php';
+require_once __DIR__ . '/../services/JiraService.php';
 
-// Handle Lead Capture form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
     $name    = trim($_POST['name']);
@@ -20,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 
     if (isset($stmt)) {
         if ($stmt->execute()) {
-            // Get the inserted lead ID
+            
             $leadId = $conn->insert_id;
             
             // Detect keywords and send auto-reply email
@@ -28,12 +30,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
             $emailService = new EmailService($conn);
             $emailSent = $emailService->sendAutoReply($name, $email, $keywords, $leadId);
             
-            // Redirect with both lead and email status
+            // Create Jira issue
+            $jiraService = new JiraService($conn);
+            $leadData = [
+                'id' => $leadId,
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'budget' => $budget,
+                'message' => $message
+            ];
+            $jiraResult = $jiraService->createIssue($leadData);
+            
+            // Update lead with Jira issue key if created successfully
+            if ($jiraResult && isset($jiraResult['key'])) {
+                $updateStmt = $conn->prepare("UPDATE leads SET jira_issue_key = ? WHERE id = ?");
+                $updateStmt->bind_param('si', $jiraResult['key'], $leadId);
+                $updateStmt->execute();
+                $updateStmt->close();
+            }
+            
+            // Redirect with lead, email, and Jira status
             $redirectUrl = '/src/pages/lead_capture.php?success=1';
             if ($emailSent) {
                 $redirectUrl .= '&email=1';
             } else {
                 $redirectUrl .= '&email=0';
+            }
+            if ($jiraResult && isset($jiraResult['key'])) {
+                $redirectUrl .= '&jira=1';
+            } else {
+                $redirectUrl .= '&jira=0';
             }
             
             header('Location: ' . $redirectUrl, true, 303);
@@ -73,12 +100,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 if ($_GET['email'] == '1'): 
                     $type = 'success';
                     $message = 'Auto-reply email sent successfully.';
-                    $duration = 3000; // Slightly longer for email success
+                    $duration = 3000; 
                     include __DIR__ . '/../components/alert.php';
                 elseif ($_GET['email'] == '0'): 
                     $type = 'warning';
                     $message = 'Lead saved, but auto-reply email failed to send.';
-                    $duration = 4000; // Longer for warnings
+                    $duration = 4000; 
+                    include __DIR__ . '/../components/alert.php';
+                endif;
+            endif;
+            
+            // Jira status alerts
+            if (isset($_GET['jira'])): 
+                if ($_GET['jira'] == '1'): 
+                    $type = 'success';
+                    $message = 'Jira issue created successfully.';
+                    $duration = 3500;
+                    include __DIR__ . '/../components/alert.php';
+                elseif ($_GET['jira'] == '0'): 
+                    $type = 'warning';
+                    $message = 'Lead saved, but Jira issue creation failed.';
+                    $duration = 4000;
                     include __DIR__ . '/../components/alert.php';
                 endif;
             endif; 

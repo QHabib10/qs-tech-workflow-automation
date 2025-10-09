@@ -25,7 +25,6 @@ class EmailService {
         $this->mailer->SMTPSecure = getenv('SMTP_SECURE');
         $this->mailer->Port = (int)getenv('SMTP_PORT');
         
-        
         $this->mailer->setFrom(getenv('FROM_EMAIL'), getenv('FROM_NAME'));
         $this->mailer->addReplyTo(getenv('REPLY_TO') ?: getenv('FROM_EMAIL'));
     }
@@ -77,6 +76,5 @@ class EmailService {
             $stmt->execute();
             $stmt->close();
         }
-       
     }
 }

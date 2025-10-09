@@ -29,7 +29,7 @@
     function cleanupUrlParameters() {
         try {
             const url = new URL(window.location.href);
-            const paramsToRemove = ['success', 'email', 'error', 'info'];
+            const paramsToRemove = ['success', 'email', 'jira', 'error', 'info'];
             let hasChanges = false;
             
             paramsToRemove.forEach(function(param) {
